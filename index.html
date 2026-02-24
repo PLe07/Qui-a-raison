@@ -209,8 +209,8 @@
 
         function showFinal(names) {
             // Logique de triche : on cherche les noms avec accents
-            const favNames = names.filter(n => /[éáèàîïôûù]/.test(n.toLowerCase()));
-            const otherNames = names.filter(n => !/[éáèàîïôûù]/.test(n.toLowerCase()));
+            const favNames = names.filter(n => /[é]/.test(n.toLowerCase()));
+            const otherNames = names.filter(n => !/[é]/.test(n.toLowerCase()));
             
             let final;
             // Si des noms avec accents existent, on applique le 75% de chance
