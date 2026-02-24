@@ -3,222 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PickMe! Gold</title>
+    <title>PickMe! Cyber-Mat</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-    :root {
-        /* Palette Futuriste Mate */
-        --bg-color: #0a0a0b;          /* Noir très profond mat */
-        --card-bg: #121214;          /* Gris anthracite mat */
-        --border-color: #1f1f22;     /* Bordure subtile */
-        --accent-glow: #00d1ff;      /* Bleu néon froid */
-        --text-main: #e4e4e7;        /* Blanc cassé */
-        --text-dim: #52525b;         /* Gris éteint */
-        --btn-bg: #e4e4e7;           /* Bouton blanc mat */
-    }
+        :root {
+            --bg-color: #0d0d0e;          /* Noir mat profond */
+            --card-bg: #161618;           /* Gris anthracite mat */
+            --border-color: #242427;      /* Bordure technique */
+            --accent-glow: #00d1ff;       /* Bleu néon froid */
+            --text-main: #e4e4e7;         /* Blanc cassé */
+            --text-dim: #52525b;          /* Gris éteint */
+            --btn-bg: #ffffff;            /* Bouton blanc mat */
+        }
 
-    body {
-        font-family: 'Inter', -apple-system, sans-serif;
-        background: var(--bg-color);
-        color: var(--text-main);
-        margin: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        overflow: hidden;
-    }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
 
-    /* On garde l'effet de lueur mais en beaucoup plus discret et froid */
-    .glow-bg {
-        position: absolute;
-        width: 400px; height: 400px;
-        background: var(--accent-glow);
-        filter: blur(150px);
-        border-radius: 50%;
-        opacity: 0.03; /* Presque invisible, juste une ambiance */
-        z-index: -1;
-    }
+        /* Ambiance lumineuse très subtile */
+        .glow-bg {
+            position: absolute;
+            width: 400px; height: 400px;
+            background: var(--accent-glow);
+            filter: blur(150px);
+            border-radius: 50%;
+            opacity: 0.05;
+            z-index: -1;
+        }
 
-    .app-container {
-        width: 85%;
-        max-width: 380px;
-        background: var(--card-bg);
-        border: 1px solid var(--border-color);
-        border-radius: 32px;
-        padding: 40px 25px;
-        text-align: center;
-        box-shadow: 0 30px 60px rgba(0,0,0,0.4);
-    }
+        .app-container {
+            width: 85%;
+            max-width: 360px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 40px 25px;
+            text-align: center;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+        }
 
-    h1 {
-        font-weight: 700;
-        font-size: 24px;
-        letter-spacing: 2px;
-        margin: 0 0 8px 0;
-        color: var(--text-main);
-        text-transform: uppercase;
-    }
+        h1 {
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: 4px;
+            margin: 0 0 5px 0;
+            text-transform: uppercase;
+        }
 
-    p { 
-        color: var(--text-dim); 
-        font-size: 11px; 
-        margin-bottom: 30px; 
-        letter-spacing: 3px;
-        text-transform: uppercase;
-    }
+        .subtitle { 
+            color: var(--text-dim); 
+            font-size: 10px; 
+            margin-bottom: 35px; 
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
 
-    .input-wrapper {
-        background: #000000;
-        border-radius: 20px;
-        padding: 20px;
-        border: 1px solid var(--border-color);
-        transition: 0.4s;
-    }
+        .input-wrapper {
+            background: #080808;
+            border-radius: 16px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-    .input-wrapper:focus-within {
-        border-color: var(--accent-glow);
-    }
+        .input-wrapper:focus-within {
+            border-color: var(--accent-glow);
+            box-shadow: 0 0 20px rgba(0, 209, 255, 0.1);
+        }
 
-    textarea {
-        width: 100%;
-        border: none;
-        background: transparent;
-        color: var(--text-main);
-        font-size: 16px;
-        font-family: 'Courier New', Courier, monospace; /* Look un peu terminal */
-        resize: none;
-        height: 100px;
-        outline: none;
-        text-align: center;
-    }
+        textarea {
+            width: 100%;
+            border: none;
+            background: transparent;
+            color: var(--text-main);
+            font-size: 15px;
+            font-family: 'SF Mono', 'Courier New', monospace;
+            resize: none;
+            height: 120px;
+            outline: none;
+            text-align: center;
+            line-height: 1.6;
+        }
 
-    .btn-trigger {
-        margin-top: 30px;
-        background: var(--btn-bg);
-        color: #000;
-        border: none;
-        width: 100%;
-        padding: 18px;
-        border-radius: 14px;
-        font-size: 15px;
-        font-weight: 800;
-        letter-spacing: 1px;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
+        .btn-trigger {
+            margin-top: 25px;
+            background: var(--btn-bg);
+            color: #000;
+            border: none;
+            width: 100%;
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
 
-    .btn-trigger:active {
-        transform: scale(0.97);
-        background: var(--accent-glow); /* Le bouton flashe en bleu au clic */
-    }
+        .btn-trigger:active {
+            transform: scale(0.96);
+            background: var(--accent-glow);
+        }
 
-    #result-display {
-        height: 100px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-top: 15px;
-    }
+        #result-display {
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+        }
 
-    .winner-name {
-        font-size: 32px;
-        font-weight: 800;
-        color: var(--accent-glow); /* Le gagnant ressort en bleu néon */
-        text-shadow: 0 0 15px rgba(0, 209, 255, 0.4);
-        animation: pop 0.3s ease-out;
-    }
+        .winner-name {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--accent-glow);
+            text-shadow: 0 0 20px rgba(0, 209, 255, 0.5);
+            text-transform: uppercase;
+            animation: emerge 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
 
-    @keyframes pop { 
-        from { transform: scale(0.8); opacity: 0; } 
-        to { transform: scale(1); opacity: 1; } 
-    }
+        @keyframes emerge { 
+            from { transform: translateY(20px); opacity: 0; } 
+            to { transform: translateY(0); opacity: 1; } 
+        }
 
-    .footer-tools {
-        margin-top: 25px;
-    }
-
-    .tool-link {
-        color: var(--text-dim);
-        font-size: 10px;
-        text-decoration: none;
-        letter-spacing: 1px;
-        background: none;
-        border: none;
-        cursor: pointer;
-        opacity: 0.5;
-    }
-</style>
+        .clear-link {
+            display: block;
+            margin-top: 30px;
+            color: var(--text-dim);
+            font-size: 10px;
+            text-decoration: none;
+            background: none;
+            border: none;
+            width: 100%;
+            cursor: pointer;
+            letter-spacing: 1px;
+        }
+    </style>
 </head>
 <body>
 
     <div class="glow-bg"></div>
 
     <div class="app-container">
-        <h1>PICKME</h1>
-        <p>TAP TO DECIDE YOUR FATE</p>
+        <h1>System.Random</h1>
+        <div class="subtitle">Assignation du destin</div>
         
         <div class="input-wrapper">
-            <textarea id="list" oninput="save()" placeholder="Noms ici..."></textarea>
+            <textarea id="list" oninput="save()" placeholder="LISTER LES NOMS..."></textarea>
         </div>
 
-        <button class="btn-trigger" onclick="run()">DÉCIDER MAINTENANT</button>
+        <button class="btn-trigger" onclick="run()">Exécuter</button>
         
-        <div id="result-display">
-            </div>
+        <div id="result-display"></div>
 
-        <div class="footer-tools">
-            <button class="tool-link" onclick="clearList()">Reset</button>
-        </div>
+        <button class="clear-link" onclick="clearList()">RÉINITIALISER LA BASE</button>
     </div>
 
     <script>
-        const textarea = document.getElementById('list');
-        const resultDiv = document.getElementById('result-display');
+        const area = document.getElementById('list');
+        const res = document.getElementById('result-display');
 
         window.onload = () => {
-            textarea.value = localStorage.getItem('ultra-list') || "";
+            area.value = localStorage.getItem('cyber-list') || "";
         }
 
         function save() {
-            localStorage.setItem('ultra-list', textarea.value);
+            localStorage.setItem('cyber-list', area.value);
         }
 
         function clearList() {
-            if(confirm("Tout effacer ?")) {
-                textarea.value = "";
+            if(confirm("Vider la liste ?")) {
+                area.value = "";
                 save();
-                resultDiv.innerHTML = "";
+                res.innerHTML = "";
             }
         }
 
         function run() {
-            const names = textarea.value.split(/[,\n]/).map(n => n.trim()).filter(n => n !== "");
-            
+            const names = area.value.split(/[,\n]/).map(n => n.trim()).filter(n => n !== "");
             if (names.length < 2) return;
 
-            // Effet de scan rapide avant le résultat
-            let count = 0;
-            const interval = setInterval(() => {
-                resultDiv.innerHTML = `<span style="color:#444; font-size: 20px;">${names[Math.floor(Math.random() * names.length)]}</span>`;
-                count++;
-                if (count > 10) {
-                    clearInterval(interval);
-                    showFinal(names);
-                }
-            }, 50);
-        }
-
-        function showFinal(names) {
-            const final = names[Math.floor(Math.random() * names.length)];
-            resultDiv.innerHTML = `<div class="winner-name">${final}</div>`;
+            res.innerHTML = '<span style="color: #52525b; font-size: 14px; letter-spacing: 2px;">SCANNING...</span>';
             
-            confetti({
-                particleCount: 150,
-                spread: 100,
-                origin: { y: 0.8 },
-                colors: ['#00f2ff', '#ffffff', '#7000ff']
-            });
+            setTimeout(() => {
+                const winner = names[Math.floor(Math.random() * names.length)];
+                res.innerHTML = `<div class="winner-name">${winner}</div>`;
+                
+                confetti({
+                    particleCount: 80,
+                    spread: 50,
+                    origin: { y: 0.75 },
+                    colors: ['#00d1ff', '#ffffff']
+                });
+            }, 700);
         }
     </script>
 </body>
