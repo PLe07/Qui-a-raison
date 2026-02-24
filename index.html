@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PickMe! | Le Décideur Ultime</title>
+    <title>PickMe! Pro</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
             --primary: #6366f1;
@@ -27,45 +28,53 @@
 
         .container {
             background: var(--card-bg);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 2.5rem;
-            border-radius: 24px;
+            padding: 2rem;
+            border-radius: 28px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            width: 100%;
+            width: 90%;
             max-width: 400px;
             text-align: center;
-            animation: fadeIn 0.8s ease-out;
+            z-index: 10;
         }
 
         h1 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
+            font-size: 2.2rem;
+            margin-bottom: 5px;
             background: linear-gradient(to right, #818cf8, #c084fc);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        p { color: #94a3b8; font-size: 0.9rem; margin-bottom: 2rem; }
+        .status {
+            font-size: 0.7rem;
+            color: #4ade80;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
 
         textarea {
             width: 100%;
-            height: 120px;
-            background: rgba(0, 0, 0, 0.2);
+            height: 150px;
+            background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 1rem;
+            border-radius: 16px;
+            padding: 1.2rem;
             color: white;
             font-size: 1rem;
             resize: none;
             box-sizing: border-box;
             transition: all 0.3s;
+            margin-bottom: 1rem;
         }
 
         textarea:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
         }
 
         button {
@@ -73,102 +82,96 @@
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
             border: none;
-            padding: 1rem;
-            border-radius: 12px;
-            font-weight: 600;
+            padding: 1.1rem;
+            border-radius: 16px;
+            font-weight: 700;
             font-size: 1rem;
             cursor: pointer;
-            margin-top: 1.5rem;
-            transition: transform 0.2s, box-shadow 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
         }
 
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.5);
-        }
-
-        button:active { transform: translateY(0); }
+        button:active { transform: scale(0.98); }
 
         #result-container {
-            margin-top: 2rem;
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            margin-top: 1.5rem;
+            min-height: 70px;
         }
 
-        .winner-card {
-            font-size: 1.5rem;
+        .winner-display {
+            font-size: 1.6rem;
             font-weight: 800;
             padding: 1rem;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            width: 100%;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.08);
             display: none;
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: spring 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
-        
-        /* Petit effet de particules en arrière-plan */
-        .dot { position: absolute; background: white; border-radius: 50%; opacity: 0.1; z-index: -1; }
+        @keyframes spring {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h1>PickMe!</h1>
-        <p>Laisse le hasard trancher le débat.</p>
+        <div class="status">● Sauvegarde auto active</div>
         
-        <textarea id="names" placeholder="Entrez les noms séparés par une virgule ou une ligne..."></textarea>
+        <textarea id="names" oninput="saveNames()" placeholder="Ex: Lucas, Sarah, Julie..."></textarea>
         
-        <button onclick="pickWinner()">Désigner le coupable</button>
+        <button onclick="pickWinner()">Lancer le tirage</button>
 
         <div id="result-container">
-            <div id="winnerDisplay" class="winner-card"></div>
+            <div id="winnerDisplay" class="winner-display"></div>
         </div>
     </div>
 
     <script>
+        // 1. Charger les noms au démarrage
+        window.onload = () => {
+            const saved = localStorage.getItem('maListeDeNoms');
+            if (saved) {
+                document.getElementById('names').value = saved;
+            }
+        };
+
+        // 2. Sauvegarder à chaque modification
+        function saveNames() {
+            const val = document.getElementById('names').value;
+            localStorage.setItem('maListeDeNoms', val);
+        }
+
+        // 3. Le tirage au sort
         function pickWinner() {
             const input = document.getElementById('names').value;
             const display = document.getElementById('winnerDisplay');
-            
-            // Nettoyage des données (virgules ou retours à la ligne)
-            const list = input.split(/[,\n]/).map(name => name.trim()).filter(name => name !== "");
+            const list = input.split(/[,\n]/).map(n => n.trim()).filter(n => n !== "");
 
             if (list.length < 2) {
-                alert("Ajoute au moins deux noms !");
+                alert("Il faut au moins 2 participants !");
                 return;
             }
 
-            // Animation de "chargement"
             display.style.display = "block";
-            display.style.background = "rgba(255, 255, 255, 0.1)";
-            display.style.color = "#94a3b8";
-            display.innerText = "Calcul du destin...";
+            display.innerText = "🎲 Tirage...";
+            display.style.background = "rgba(255, 255, 255, 0.08)";
 
             setTimeout(() => {
-                const randomName = list[Math.floor(Math.random() * list.length)];
-                display.innerText = "🏆 " + randomName;
-                display.style.color = "#fff";
-                display.style.background = "rgba(99, 102, 241, 0.2)";
-                display.style.border = "1px solid rgba(99, 102, 241, 0.5)";
-            }, 1000);
-        }
-
-        // Ajout de quelques points décoratifs en fond
-        for (let i = 0; i < 20; i++) {
-            let dot = document.createElement('div');
-            dot.className = 'dot';
-            dot.style.width = Math.random() * 5 + 'px';
-            dot.style.height = dot.style.width;
-            dot.style.left = Math.random() * 100 + 'vw';
-            dot.style.top = Math.random() * 100 + 'vh';
-            document.body.appendChild(dot);
+                const winner = list[Math.floor(Math.random() * list.length)];
+                display.innerText = "🏆 " + winner;
+                display.style.background = "rgba(74, 222, 128, 0.2)";
+                
+                // 4. Lancement des confettis !
+                confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#6366f1', '#a855f7', '#4ade80']
+                });
+            }, 800);
         }
     </script>
 </body>
