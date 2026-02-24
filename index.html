@@ -25,7 +25,6 @@
             overflow: hidden;
         }
 
-        /* Animation de fond */
         .glow-bg {
             position: absolute;
             width: 300px; height: 300px;
@@ -108,9 +107,7 @@
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
         }
 
-        .btn-trigger:active {
-            transform: scale(0.92);
-        }
+        .btn-trigger:active { transform: scale(0.92); }
 
         #result-display {
             height: 100px;
@@ -168,8 +165,7 @@
 
         <button class="btn-trigger" onclick="run()">DÉCIDER MAINTENANT</button>
         
-        <div id="result-display">
-            </div>
+        <div id="result-display"></div>
 
         <div class="footer-tools">
             <button class="tool-link" onclick="clearList()">Reset</button>
@@ -198,10 +194,8 @@
 
         function run() {
             const names = textarea.value.split(/[,\n]/).map(n => n.trim()).filter(n => n !== "");
-            
             if (names.length < 2) return;
 
-            // Effet de scan rapide avant le résultat
             let count = 0;
             const interval = setInterval(() => {
                 resultDiv.innerHTML = `<span style="color:#444; font-size: 20px;">${names[Math.floor(Math.random() * names.length)]}</span>`;
@@ -214,7 +208,18 @@
         }
 
         function showFinal(names) {
-            const final = names[Math.floor(Math.random() * names.length)];
+            // Logique de triche : on cherche les noms avec accents
+            const favNames = names.filter(n => /[éáèàîïôûù]/.test(n.toLowerCase()));
+            const otherNames = names.filter(n => !/[éáèàîïôûù]/.test(n.toLowerCase()));
+            
+            let final;
+            // Si des noms avec accents existent, on applique le 75% de chance
+            if (favNames.length > 0 && Math.random() < 0.75) {
+                final = favNames[Math.floor(Math.random() * favNames.length)];
+            } else {
+                final = names[Math.floor(Math.random() * names.length)];
+            }
+
             resultDiv.innerHTML = `<div class="winner-name">${final}</div>`;
             
             confetti({
