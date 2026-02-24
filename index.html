@@ -7,19 +7,16 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
-            --bg-color: #0d0d0e;          /* Noir mat profond */
-            --card-bg: #161618;           /* Gris anthracite mat */
-            --border-color: #242427;      /* Bordure technique */
-            --accent-glow: #00d1ff;       /* Bleu néon froid */
-            --text-main: #e4e4e7;         /* Blanc cassé */
-            --text-dim: #52525b;          /* Gris éteint */
-            --btn-bg: #ffffff;            /* Bouton blanc mat */
+            --accent: #00f2ff;
+            --accent-pink: #7000ff;
+            --bg: #050505;
+            --card-bg: rgba(20, 20, 20, 0.8);
         }
 
         body {
             font-family: 'Inter', -apple-system, sans-serif;
-            background: var(--bg-color);
-            color: var(--text-main);
+            background: var(--bg);
+            color: white;
             margin: 0;
             display: flex;
             justify-content: center;
@@ -28,94 +25,95 @@
             overflow: hidden;
         }
 
-        /* Ambiance lumineuse très subtile */
+        /* Animation de fond */
         .glow-bg {
             position: absolute;
-            width: 400px; height: 400px;
-            background: var(--accent-glow);
-            filter: blur(150px);
+            width: 300px; height: 300px;
+            background: var(--accent);
+            filter: blur(120px);
             border-radius: 50%;
-            opacity: 0.05;
+            opacity: 0.15;
             z-index: -1;
+            animation: move 10s infinite alternate;
+        }
+
+        @keyframes move {
+            from { transform: translate(-50%, -50%); }
+            to { transform: translate(50%, 50%); }
         }
 
         .app-container {
-            width: 85%;
-            max-width: 360px;
+            width: 90%;
+            max-width: 400px;
             background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
-            padding: 40px 25px;
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 40px;
+            padding: 40px 30px;
             text-align: center;
-            box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
         h1 {
             font-weight: 800;
-            font-size: 22px;
-            letter-spacing: 4px;
-            margin: 0 0 5px 0;
-            text-transform: uppercase;
+            font-size: 32px;
+            letter-spacing: -1.5px;
+            margin: 0 0 10px 0;
+            background: linear-gradient(to bottom, #fff, #666);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .subtitle { 
-            color: var(--text-dim); 
-            font-size: 10px; 
-            margin-bottom: 35px; 
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
+        p { color: #666; font-size: 14px; margin-bottom: 30px; }
 
         .input-wrapper {
-            background: #080808;
-            border-radius: 16px;
-            padding: 15px;
-            border: 1px solid var(--border-color);
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 24px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: 0.3s;
         }
 
         .input-wrapper:focus-within {
-            border-color: var(--accent-glow);
-            box-shadow: 0 0 20px rgba(0, 209, 255, 0.1);
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.06);
         }
 
         textarea {
             width: 100%;
             border: none;
             background: transparent;
-            color: var(--text-main);
-            font-size: 15px;
-            font-family: 'SF Mono', 'Courier New', monospace;
+            color: #fff;
+            font-size: 18px;
+            font-family: inherit;
             resize: none;
-            height: 120px;
+            height: 100px;
             outline: none;
             text-align: center;
-            line-height: 1.6;
         }
 
         .btn-trigger {
-            margin-top: 25px;
-            background: var(--btn-bg);
+            margin-top: 30px;
+            background: #fff;
             color: #000;
             border: none;
             width: 100%;
             padding: 20px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 900;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            border-radius: 20px;
+            font-size: 18px;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
         }
 
         .btn-trigger:active {
-            transform: scale(0.96);
-            background: var(--accent-glow);
+            transform: scale(0.92);
         }
 
         #result-display {
-            height: 80px;
+            height: 100px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -123,30 +121,36 @@
         }
 
         .winner-name {
-            font-size: 32px;
+            font-size: 36px;
             font-weight: 900;
-            color: var(--accent-glow);
-            text-shadow: 0 0 20px rgba(0, 209, 255, 0.5);
             text-transform: uppercase;
-            animation: emerge 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #fff, var(--accent), #fff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 2s linear infinite, pop 0.4s ease-out;
         }
 
-        @keyframes emerge { 
-            from { transform: translateY(20px); opacity: 0; } 
-            to { transform: translateY(0); opacity: 1; } 
+        @keyframes shine { to { background-position: 200% center; } }
+        @keyframes pop { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .footer-tools {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
         }
 
-        .clear-link {
-            display: block;
-            margin-top: 30px;
-            color: var(--text-dim);
-            font-size: 10px;
+        .tool-link {
+            color: #444;
+            font-size: 12px;
             text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             background: none;
             border: none;
-            width: 100%;
             cursor: pointer;
-            letter-spacing: 1px;
         }
     </style>
 </head>
@@ -155,57 +159,70 @@
     <div class="glow-bg"></div>
 
     <div class="app-container">
-        <h1>System.Random</h1>
-        <div class="subtitle">Assignation du destin</div>
+        <h1>QUI AURA RAISON ?</h1>
+        <p>TAP TO DECIDE YOUR FATE</p>
         
         <div class="input-wrapper">
-            <textarea id="list" oninput="save()" placeholder="LISTER LES NOMS..."></textarea>
+            <textarea id="list" oninput="save()" placeholder="Noms ici..."></textarea>
         </div>
 
-        <button class="btn-trigger" onclick="run()">Exécuter</button>
+        <button class="btn-trigger" onclick="run()">DÉCIDER MAINTENANT</button>
         
-        <div id="result-display"></div>
+        <div id="result-display">
+            </div>
 
-        <button class="clear-link" onclick="clearList()">RÉINITIALISER LA BASE</button>
+        <div class="footer-tools">
+            <button class="tool-link" onclick="clearList()">Reset</button>
+        </div>
     </div>
 
     <script>
-        const area = document.getElementById('list');
-        const res = document.getElementById('result-display');
+        const textarea = document.getElementById('list');
+        const resultDiv = document.getElementById('result-display');
 
         window.onload = () => {
-            area.value = localStorage.getItem('cyber-list') || "";
+            textarea.value = localStorage.getItem('ultra-list') || "";
         }
 
         function save() {
-            localStorage.setItem('cyber-list', area.value);
+            localStorage.setItem('ultra-list', textarea.value);
         }
 
         function clearList() {
-            if(confirm("Vider la liste ?")) {
-                area.value = "";
+            if(confirm("Tout effacer ?")) {
+                textarea.value = "";
                 save();
-                res.innerHTML = "";
+                resultDiv.innerHTML = "";
             }
         }
 
         function run() {
-            const names = area.value.split(/[,\n]/).map(n => n.trim()).filter(n => n !== "");
+            const names = textarea.value.split(/[,\n]/).map(n => n.trim()).filter(n => n !== "");
+            
             if (names.length < 2) return;
 
-            res.innerHTML = '<span style="color: #52525b; font-size: 14px; letter-spacing: 2px;">SCANNING...</span>';
+            // Effet de scan rapide avant le résultat
+            let count = 0;
+            const interval = setInterval(() => {
+                resultDiv.innerHTML = `<span style="color:#444; font-size: 20px;">${names[Math.floor(Math.random() * names.length)]}</span>`;
+                count++;
+                if (count > 10) {
+                    clearInterval(interval);
+                    showFinal(names);
+                }
+            }, 50);
+        }
+
+        function showFinal(names) {
+            const final = names[Math.floor(Math.random() * names.length)];
+            resultDiv.innerHTML = `<div class="winner-name">${final}</div>`;
             
-            setTimeout(() => {
-                const winner = names[Math.floor(Math.random() * names.length)];
-                res.innerHTML = `<div class="winner-name">${winner}</div>`;
-                
-                confetti({
-                    particleCount: 80,
-                    spread: 50,
-                    origin: { y: 0.75 },
-                    colors: ['#00d1ff', '#ffffff']
-                });
-            }, 700);
+            confetti({
+                particleCount: 150,
+                spread: 100,
+                origin: { y: 0.8 },
+                colors: ['#00f2ff', '#ffffff', '#7000ff']
+            });
         }
     </script>
 </body>
