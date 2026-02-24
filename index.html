@@ -2,16 +2,174 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Le Tirage au Sort</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PickMe! | Le Décideur Ultime</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --bg: #0f172a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text: #f8fafc;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: radial-gradient(circle at top left, #1e1b4b, #0f172a);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .container {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p { color: #94a3b8; font-size: 0.9rem; margin-bottom: 2rem; }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            color: white;
+            font-size: 1rem;
+            resize: none;
+            box-sizing: border-box;
+            transition: all 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        button {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.5);
+        }
+
+        button:active { transform: translateY(0); }
+
+        #result-container {
+            margin-top: 2rem;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .winner-card {
+            font-size: 1.5rem;
+            font-weight: 800;
+            padding: 1rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            width: 100%;
+            display: none;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        
+        /* Petit effet de particules en arrière-plan */
+        .dot { position: absolute; background: white; border-radius: 50%; opacity: 0.1; z-index: -1; }
+    </style>
 </head>
 <body>
+
     <div class="container">
-        <h1>⚖️ Qui va s'y coller ?</h1>
-        <textarea id="playerList" placeholder="Entre les noms ici (un par ligne)..."></textarea>
-        <button onclick="tirerAuSort()">Lancer le destin</button>
-        <div id="resultat"></div>
+        <h1>PickMe!</h1>
+        <p>Laisse le hasard trancher le débat.</p>
+        
+        <textarea id="names" placeholder="Entrez les noms séparés par une virgule ou une ligne..."></textarea>
+        
+        <button onclick="pickWinner()">Désigner le coupable</button>
+
+        <div id="result-container">
+            <div id="winnerDisplay" class="winner-card"></div>
+        </div>
     </div>
-    <script src="script.js"></script>
+
+    <script>
+        function pickWinner() {
+            const input = document.getElementById('names').value;
+            const display = document.getElementById('winnerDisplay');
+            
+            // Nettoyage des données (virgules ou retours à la ligne)
+            const list = input.split(/[,\n]/).map(name => name.trim()).filter(name => name !== "");
+
+            if (list.length < 2) {
+                alert("Ajoute au moins deux noms !");
+                return;
+            }
+
+            // Animation de "chargement"
+            display.style.display = "block";
+            display.style.background = "rgba(255, 255, 255, 0.1)";
+            display.style.color = "#94a3b8";
+            display.innerText = "Calcul du destin...";
+
+            setTimeout(() => {
+                const randomName = list[Math.floor(Math.random() * list.length)];
+                display.innerText = "🏆 " + randomName;
+                display.style.color = "#fff";
+                display.style.background = "rgba(99, 102, 241, 0.2)";
+                display.style.border = "1px solid rgba(99, 102, 241, 0.5)";
+            }, 1000);
+        }
+
+        // Ajout de quelques points décoratifs en fond
+        for (let i = 0; i < 20; i++) {
+            let dot = document.createElement('div');
+            dot.className = 'dot';
+            dot.style.width = Math.random() * 5 + 'px';
+            dot.style.height = dot.style.width;
+            dot.style.left = Math.random() * 100 + 'vw';
+            dot.style.top = Math.random() * 100 + 'vh';
+            document.body.appendChild(dot);
+        }
+    </script>
 </body>
 </html>
