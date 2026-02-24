@@ -2,176 +2,190 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PickMe! Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Décideur Pro</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
-            --primary: #6366f1;
-            --secondary: #a855f7;
-            --bg: #0f172a;
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --text: #f8fafc;
+            --ios-blue: #007AFF;
+            --ios-bg: #f2f2f7;
+            --glass: rgba(255, 255, 255, 0.7);
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: radial-gradient(circle at top left, #1e1b4b, #0f172a);
-            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--ios-bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(100, 148, 255, 0.2) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.2) 0px, transparent 50%);
+            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            overflow: hidden;
+            height: 100vh;
+            color: #000;
         }
 
-        .container {
-            background: var(--card-bg);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 2rem;
-            border-radius: 28px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        .iphone-card {
             width: 90%;
-            max-width: 400px;
+            max-width: 380px;
+            background: var(--glass);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-radius: 30px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid rgba(255,255,255,0.3);
             text-align: center;
-            z-index: 10;
         }
 
         h1 {
-            font-size: 2.2rem;
-            margin-bottom: 5px;
-            background: linear-gradient(to right, #818cf8, #c084fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            font-size: 24px;
+            letter-spacing: -0.5px;
+            margin-bottom: 20px;
         }
 
-        .status {
-            font-size: 0.7rem;
-            color: #4ade80;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            opacity: 0.8;
+        .input-group {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 18px;
+            padding: 15px;
+            margin-bottom: 20px;
         }
 
         textarea {
             width: 100%;
-            height: 150px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 1.2rem;
-            color: white;
-            font-size: 1rem;
+            border: none;
+            background: transparent;
+            font-size: 17px;
+            font-family: inherit;
             resize: none;
-            box-sizing: border-box;
-            transition: all 0.3s;
-            margin-bottom: 1rem;
-        }
-
-        textarea:focus {
+            height: 120px;
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+            color: #1c1c1e;
         }
 
-        button {
-            width: 100%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        .btn-main {
+            background: var(--ios-blue);
             color: white;
             border: none;
-            padding: 1.1rem;
+            width: 100%;
+            padding: 16px;
             border-radius: 16px;
-            font-weight: 700;
-            font-size: 1rem;
+            font-size: 17px;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            -webkit-tap-highlight-color: transparent;
         }
 
-        button:active { transform: scale(0.98); }
-
-        #result-container {
-            margin-top: 1.5rem;
-            min-height: 70px;
+        .btn-main:active {
+            transform: scale(0.96);
+            filter: brightness(0.9);
         }
 
-        .winner-display {
-            font-size: 1.6rem;
+        #result-box {
+            margin-top: 25px;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .winner-text {
+            font-size: 28px;
             font-weight: 800;
-            padding: 1rem;
-            border-radius: 16px;
-            background: rgba(255, 255, 255, 0.08);
-            display: none;
-            animation: spring 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: #1c1c1e;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        @keyframes spring {
-            0% { transform: scale(0.5); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+        .winner-text.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .clear-btn {
+            background: none;
+            border: none;
+            color: var(--ios-blue);
+            font-size: 14px;
+            margin-top: 15px;
+            cursor: pointer;
+            padding: 10px;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>PickMe!</h1>
-        <div class="status">● Sauvegarde auto active</div>
+    <div class="iphone-card">
+        <h1>Le Décideur</h1>
         
-        <textarea id="names" oninput="saveNames()" placeholder="Ex: Lucas, Sarah, Julie..."></textarea>
-        
-        <button onclick="pickWinner()">Lancer le tirage</button>
-
-        <div id="result-container">
-            <div id="winnerDisplay" class="winner-display"></div>
+        <div class="input-group">
+            <textarea id="namesList" oninput="save()" placeholder="Noms (ex: Lise, Quentin, Léa...)"></textarea>
         </div>
+
+        <button class="btn-main" onclick="roll()">Tirer au sort</button>
+        
+        <div id="result-box">
+            <div id="winner" class="winner-text"></div>
+        </div>
+
+        <button class="clear-btn" onclick="clearAll()">Effacer la liste</button>
     </div>
 
     <script>
-        // 1. Charger les noms au démarrage
+        const input = document.getElementById('namesList');
+        const display = document.getElementById('winner');
+
+        // Charger au démarrage
         window.onload = () => {
-            const saved = localStorage.getItem('maListeDeNoms');
-            if (saved) {
-                document.getElementById('names').value = saved;
-            }
+            input.value = localStorage.getItem('list') || "";
         };
 
-        // 2. Sauvegarder à chaque modification
-        function saveNames() {
-            const val = document.getElementById('names').value;
-            localStorage.setItem('maListeDeNoms', val);
+        function save() {
+            localStorage.setItem('list', input.value);
         }
 
-        // 3. Le tirage au sort
-        function pickWinner() {
-            const input = document.getElementById('names').value;
-            const display = document.getElementById('winnerDisplay');
-            const list = input.split(/[,\n]/).map(n => n.trim()).filter(n => n !== "");
+        function clearAll() {
+            if(confirm("Effacer tous les noms ?")) {
+                input.value = "";
+                save();
+                display.classList.remove('show');
+            }
+        }
 
+        function roll() {
+            const list = input.value.split(/[,\n]/).map(n => n.trim()).filter(n => n !== "");
+            
             if (list.length < 2) {
-                alert("Il faut au moins 2 participants !");
+                alert("Ajoute au moins 2 personnes !");
                 return;
             }
 
-            display.style.display = "block";
-            display.innerText = "🎲 Tirage...";
-            display.style.background = "rgba(255, 255, 255, 0.08)";
+            // Animation de chargement
+            display.classList.remove('show');
+            display.innerText = "⏳ Tirage...";
+            display.classList.add('show');
 
             setTimeout(() => {
                 const winner = list[Math.floor(Math.random() * list.length)];
-                display.innerText = "🏆 " + winner;
-                display.style.background = "rgba(74, 222, 128, 0.2)";
+                display.classList.remove('show');
                 
-                // 4. Lancement des confettis !
-                confetti({
-                    particleCount: 150,
-                    spread: 70,
-                    origin: { y: 0.6 },
-                    colors: ['#6366f1', '#a855f7', '#4ade80']
-                });
-            }, 800);
+                setTimeout(() => {
+                    display.innerText = "✨ " + winner;
+                    display.classList.add('show');
+                    
+                    confetti({
+                        particleCount: 100,
+                        spread: 60,
+                        origin: { y: 0.7 },
+                        colors: ['#007AFF', '#5856D6', '#FF2D55']
+                    });
+                }, 50);
+            }, 600);
         }
     </script>
 </body>
