@@ -208,17 +208,8 @@
         }
 
         function showFinal(names) {
-            // Logique de triche : on cherche les noms avec accents
-            const favNames = names.filter(n => /[é]/.test(n.toLowerCase()));
-            const otherNames = names.filter(n => !/[é]/.test(n.toLowerCase()));
-            
-           let final;
-            // Si des noms avec accents existent, on applique le 75% de chance
-            if (favNames.length > 0 && Math.random() < 0.75) {
-                final = favNames[Math.floor(Math.random() * favNames.length)];
-            } else {
-                final = names[Math.floor(Math.random() * names.length)];
-            }
+            // Sélection 100% aléatoire sur l'ensemble de la liste
+            const final = names[Math.floor(Math.random() * names.length)];
 
             resultDiv.innerHTML = `<div class="winner-name">${final}</div>`;
             
